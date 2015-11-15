@@ -65,54 +65,54 @@ void DisplayMenu(int x,int y)
 	{
 		input = wgetch(menu_win);
 		switch(input)                                                                                               
-                {       case KEY_UP:                                                                                    
-                                if(highlight == 1)                                                                      
-                                        highlight = choice_num;                                                          
-                                else                                                                                    
-                                        --highlight;                                                                    
-                                break;                                                                                  
-                        case KEY_DOWN:                                                                                  
-                                if(highlight == choice_num)                                                              
-                                        highlight = 1;                                                                  
-                                else                                                                                    
-                                        ++highlight;                                                                    
-                                break;                                                                                  
-                        case '\n':                                                                                        
-                                choice = highlight;                                                                     
-                                break;                                                                                  
-                        default:                                                                                        
-                                mvprintw(24, 0, "Charcter pressed is = %3d Hopefully it can be printed as '%c'", input, input); 
-                                refresh();                                                                              
-                                break;                                                                                  
-                }                                                                                                       
-    	Highlight_Menu(menu_win, highlight, choices, choice_num);                                                                        
-    	if(choice != 0) /* User did a choice come out of the infinite loop */  
-    	{
-    		// debug 용도
-    		// mvprintw(23, 0, "You chose choice %d with choice string %s\n", choice, choices[choice - 1]);
-    		// refresh();
-    		
-    		// START 선택 시
-    		if( choice == START)
-    		{
-    			//메인 선택 메뉴 clear
-    			endwin();
-    			//stage1 시작
-    			StageOneDraw();
-    			break;
-    		}
-    		// RANK 선택 시
-    		else if(choice == RANK)
-    		{
+			{       case KEY_UP:                                                                                    
+						if(highlight == 1)                                                                      
+						        highlight = choice_num;                                                          
+						else                                                                                    
+						        --highlight;                                                                    
+						break;                                                                                  
+					case KEY_DOWN:                                                                                  
+						if(highlight == choice_num)                                                              
+						        highlight = 1;                                                                  
+						else                                                                                    
+						        ++highlight;                                                                    
+						break;                                                                                  
+					case '\n':                                                                                        
+						choice = highlight;                                                                     
+						break;                                                                                  
+					default:                                                                                        
+						mvprintw(24, 0, "Charcter pressed is = %3d Hopefully it can be printed as '%c'", input, input); 
+						refresh();                                                                              
+						break;                                                                                  
+			}                                                                                                       
+		Highlight_Menu(menu_win, highlight, choices, choice_num);                                                                        
+		if(choice != 0) /* User did a choice come out of the infinite loop */  
+		{
+			// debug 용도
+			// mvprintw(23, 0, "You chose choice %d with choice string %s\n", choice, choices[choice - 1]);
+			// refresh();
+			
+			// START 선택 시
+			if( choice == START)
+			{
+				//메인 선택 메뉴 clear
+				endwin();
+				//stage1 시작
+				StageOneDraw();
+				break;
+			}
+			// RANK 선택 시
+			else if(choice == RANK)
+			{
 
-    		}
-    		// EXIT 선택 시
-    		else if(choice == EXIT)
-    		{
-    			endwin();
-    			break;
-    		}
-    	}                                 
+			}
+			// EXIT 선택 시
+			else if(choice == EXIT)
+			{
+				endwin();
+				break;
+			}
+		}
 	}
 }
 
