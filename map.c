@@ -14,14 +14,13 @@ enum Menu
 // 선택된 메뉴 하이라이트 
 void Highlight_Menu(WINDOW* menu_win, int highlight, char** choices, int choice_num )
 {
-	int x, y, i;                                                                                                    
-                                                                                                                        
-    x = 1;                                                                                                          
-    y = 1;                                                                                                          
-    box(menu_win, 0, 0);                                                                                            
-    for(i = 0; i < choice_num; ++i)                                                                                  
-    {       
-    	if(highlight == i + 1) /* High light the present choice */                                              
+	int x, y, i;                                                            
+	x = 1;                                                                                                          
+	y = 1;                                                                                                          
+	box(menu_win, 0, 0);                                                                                            
+	for(i = 0; i < choice_num; ++i)                                                                                  
+	{       
+		if(highlight == i + 1) /* High light the present choice */                                              
 		{       
 			wattron(menu_win, A_REVERSE);                                                                   
 			mvwprintw(menu_win, y, x, "%s", choices[i]);                                                    
@@ -45,7 +44,7 @@ void DisplayMenu(int x,int y)
 			"1. Start",
 			"2. Rank",
 			"3. Exit",
-					  };
+					};
 	int choice_num = sizeof(choices) / sizeof(char*);
 
 	// non echo, 버퍼링 제거
