@@ -8,7 +8,7 @@ enum Menu
 {	
 	START=1,
 	RANK,
-	EXIT
+	EXIT,
 };
 
 // 선택된 메뉴 하이라이트 
@@ -100,7 +100,7 @@ void DisplayMenu(int x,int y)
 				//메인 선택 메뉴 clear
 				endwin();
 				//stage1 시작
-				StageOneDraw();
+				StageOneDraw(FirstMap);
 				break;
 			}
 			// RANK 선택 시
@@ -134,13 +134,13 @@ void StartMenu()
 		for(y=0;y<STAGE1COL;y++)
 		{
 			// 벽 일 경우
-			if(FirstMap[x][y] == WALL)
+			if(StartMap[x][y] == WALL)
 			{
 				move(x,y);
 				addstr("*");
 			}
 			// 빈 공간일 경우
-			else if(FirstMap[x][y] == EMPTY)
+			else if(StartMap[x][y] == EMPTY)
 			{
 				continue;
 			}
@@ -154,8 +154,8 @@ void StartMenu()
 }
 
 
-//stage 1 맵 그러기
-void StageOneDraw()
+//stage 1 그리기
+void StageOneDraw(int StageMap[STAGE1ROW][STAGE1COL])
 {
 	int x=0;
 	int y=0;
@@ -169,13 +169,60 @@ void StageOneDraw()
 		for(y=0;y<STAGE1COL;y++)
 		{
 			// 벽 일 경우
-			if(FirstMap[x][y] == WALL)
+			if(StageMap[x][y] == WALL)
 			{
 				move(x,y);
 				addstr("*");
 			}
+			// snake 시작지점 일 경우
+			else if(StageMap[x][y] == SNAKE_START)
+			{
+				move(x,y);
+				addstr("[]");
+			}
 			// 빈 공간일 경우
-			else if(FirstMap[x][y] == EMPTY)
+			else if(StageMap[x][y] == EMPTY)
+			{
+				continue;
+			}
+		}
+	}
+	refresh();
+	getch();
+	endwin();
+
+	//두번째 판 시작
+	StageTwoDraw(SecondMap);
+}
+
+//두번째 판 그리기
+void StageTwoDraw(int StageMap[STAGE1ROW][STAGE1COL])
+{
+	int x=0;
+	int y=0;
+
+	//화면 클리어
+	initscr();
+	clear();
+	//맵 출력
+	for(x=0;x<STAGE1ROW;x++)
+	{
+		for(y=0;y<STAGE1COL;y++)
+		{
+			// 벽 일 경우
+			if(StageMap[x][y] == WALL)
+			{
+				move(x,y);
+				addstr("*");
+			}
+			// snake 시작지점 일 경우
+			else if(StageMap[x][y] == SNAKE_START)
+			{
+				move(x,y);
+				addstr("[]");
+			}
+			// 빈 공간일 경우
+			else if(StageMap[x][y] == EMPTY)
 			{
 				continue;
 			}
