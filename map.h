@@ -4,6 +4,14 @@
 #define WALL 1
 #define EMPTY 0
 
+// Draw function
+void DisplayMenu(int x,int y);
+void StartMenu();
+void StageOneDraw();
+
+/* Map array */
+
+// start && stage1
 static int FirstMap[STAGE1ROW][STAGE1COL] = 
 	{{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 	 {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
