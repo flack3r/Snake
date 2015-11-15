@@ -20,16 +20,18 @@ void Highlight_Menu(WINDOW* menu_win, int highlight, char** choices, int choice_
     y = 1;                                                                                                          
     box(menu_win, 0, 0);                                                                                            
     for(i = 0; i < choice_num; ++i)                                                                                  
-    {       if(highlight == i + 1) /* High light the present choice */                                              
-            {       wattron(menu_win, A_REVERSE);                                                                   
-                    mvwprintw(menu_win, y, x, "%s", choices[i]);                                                    
-                    wattroff(menu_win, A_REVERSE);                                                                  
-            }                                                                                                       
-            else                                                                                                    
-                    mvwprintw(menu_win, y, x, "%s", choices[i]);                                                    
-            ++y;                                                                                                    
-    }                                                                                                               
-    wrefresh(menu_win);
+    {       
+    	if(highlight == i + 1) /* High light the present choice */                                              
+		{       
+			wattron(menu_win, A_REVERSE);                                                                   
+			mvwprintw(menu_win, y, x, "%s", choices[i]);                                                    
+			wattroff(menu_win, A_REVERSE);                                                                  
+		}                                                                                                       
+		else                                                                                                    
+			mvwprintw(menu_win, y, x, "%s", choices[i]);                                                    
+		++y;                                                                                                    
+	}                                                                                                               
+	wrefresh(menu_win);
 }
 
 // 메뉴 선택창 출력
@@ -40,9 +42,9 @@ void DisplayMenu(int x,int y)
 	int choice = 0;
 	int input;
 	char *choices[] = {
-						"1. Start",
-						"2. Rank",
-						"3. Exit",
+			"1. Start",
+			"2. Rank",
+			"3. Exit",
 					  };
 	int choice_num = sizeof(choices) / sizeof(char*);
 
@@ -65,26 +67,27 @@ void DisplayMenu(int x,int y)
 	{
 		input = wgetch(menu_win);
 		switch(input)                                                                                               
-			{       case KEY_UP:                                                                                    
-						if(highlight == 1)                                                                      
-						        highlight = choice_num;                                                          
-						else                                                                                    
-						        --highlight;                                                                    
-						break;                                                                                  
-					case KEY_DOWN:                                                                                  
-						if(highlight == choice_num)                                                              
-						        highlight = 1;                                                                  
-						else                                                                                    
-						        ++highlight;                                                                    
-						break;                                                                                  
-					case '\n':                                                                                        
-						choice = highlight;                                                                     
-						break;                                                                                  
-					default:                                                                                        
-						mvprintw(24, 0, "Charcter pressed is = %3d Hopefully it can be printed as '%c'", input, input); 
-						refresh();                                                                              
-						break;                                                                                  
-			}                                                                                                       
+		{       
+			case KEY_UP:                                                                                    
+				if(highlight == 1)                                                                      
+				        highlight = choice_num;                                                          
+				else                                                                                    
+				        --highlight;                                                                    
+				break;                                                                                  
+			case KEY_DOWN:                                                                                  
+				if(highlight == choice_num)                                                              
+				        highlight = 1;                                                                  
+				else                                                                                    
+				        ++highlight;                                                                    
+				break;                                                                                  
+			case '\n':                                                                                        
+				choice = highlight;                                                                     
+				break;                                                                                  
+			default:                                                                                        
+				mvprintw(24, 0, "Charcter pressed is = %3d Hopefully it can be printed as '%c'", input, input); 
+				refresh();                                                                              
+				break;                                                                                  
+		}                                                                                                       
 		Highlight_Menu(menu_win, highlight, choices, choice_num);                                                                        
 		if(choice != 0) /* User did a choice come out of the infinite loop */  
 		{
