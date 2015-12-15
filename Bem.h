@@ -1,3 +1,6 @@
+#include "map.h"
+#ifndef BEM
+#define BEM
 #define BLANK ' '
 #define HEADSYMBOL '@'
 #define BODYSYMBOL 'O'
@@ -22,3 +25,9 @@ Bem *insertBody(Bem*,Bem*);
 int set_ticker(int);
 void startGame();
 void del(Bem*);
+int DrawBem(int x,int y,int StageMap[STAGE_ROW][STAGE_COL]);
+void wrap_up();
+void ReverseBem();
+void GameOver();
+int CheckTouchWall(int x,int y);
+#endif

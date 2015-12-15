@@ -6,46 +6,29 @@
 #include <sys/time.h>
 #include <stdlib.h>
 #include <unistd.h>
-//							L'☐'		L'■'
-#define BLANK ' '
-#define HEADSYMBOL '@'
-#define BODYSYMBOL 'O'
-#define SET_X 25
-#define SET_Y 10
-	
-typedef struct Bem{
-	struct Bem *prev;
-	struct Bem *next;
-	int pos_x;
-	int pos_y;
-	}Bem;
+#include "Bem.h"
+#include "map.h"
 
-void setup(int,int);
-void FollowBam();
-void moveBem();
-void set_cr_noecho_mode();
-void addBem();
-void del(Bem*);
-void wrap_up();
-void whileBem(int signum);
-Bem *insertBody(Bem*,Bem*);
-int set_ticker(int);
+#define WIN 1
+#define LOSE 0
 
 int reverse = 0;						//0이면 앞뒤반전된적 없음 1이면 앞뒤 반전됨 앞뒤반전 아이템을 먹었을때 값을 바꿔주면 됨
 int delay = 200;
 int dir_x=1;
 int dir_y=0;
-
+int game_result = -1;
+int (*CurrentMap)[STAGE_COL];
+int count = 0;
 Bem* Head;
 Bem* Tail;
 
-int main(){								//start game
+int DrawBem(int x,int y,int StageMap[STAGE_ROW][STAGE_COL]){	//start game
 	char c;
-//	set_cr_noecho_mode();
+	CurrentMap = StageMap;
+
 	signal(SIGALRM,whileBem);
 	set_ticker(delay);
-
-	setup(25,10);
+	setup(x,y);
 	
 	while(1){
 		if((c=getchar()) == 'Q') break;
@@ -55,28 +38,96 @@ int main(){								//start game
 		else if( c == 'd')	{dir_x=1; dir_y=0;}
 		else if( c == 'e')	{addBem();}
 		else if( c == 'r'){
-			if(reverse == 0){
-				reverse = 1;
-			dir_x = Tail->pos_x - Tail->prev->pos_x;
-			dir_y = Tail->pos_y - Tail->prev->pos_y;
-			}
-			else{
-				reverse = 0;
-			dir_x = Head->pos_x - Head->next->pos_x;
-			dir_y = Head->pos_y - Head->next->pos_y;
-			}
+			ReverseBem();
 		}
-		else if(c == 'x'){				//게임이 종료되었을 경우 불러오면 됨
-			signal(SIGALRM,SIG_IGN);
-			if(reverse == 0)
-				del(Tail);
-			else
-				del(Head);
-			break;}
+		else if(c == 'x' && game_result == LOSE){				//게임이 종료되었을 경우 불러오면 됨
+			break;
+		}
 	}
-	wrap_up();
 	return 1;	//이겼을 경우 0인가 1인가에 따라 승리화면과 패배화면을 출력하도록값을 넘겨줌 
 //	return 0;
+}
+
+// 충돌 이벤트 발생 처리 (이기고 지느냐에 따라 game_result값 결정)
+void CheckEvent()
+{
+	int y,x;
+	// 머리 부분 좌표
+	int Bem_x = 0;
+	int Bem_y = 0;
+
+	if(reverse == 0)
+	{
+		Bem_x = Head->pos_x;
+		Bem_y = Head->pos_y;
+	}
+	else
+	{
+		Bem_x = Tail->pos_x;
+		Bem_y = Tail->pos_y;
+	}
+
+	for(y=0;y<STAGE_ROW;y++)
+	{
+		for(x=0;x<STAGE_COL;x++)
+		{
+			if(CurrentMap[y][x] == WALL)
+			{
+				if(CheckTouchWall(x,y) == 1)
+				{
+					// mvprintw(10,55,"Bem head x %2d, head y %2d",Bem_x,Bem_y);
+					// mvprintw(23,50,"Wall !! %d",count++);
+					mvprintw(10,55,"You die. Enter 'x' key");
+					refresh();
+					game_result = LOSE;
+					GameOver();
+				}
+			}
+		}
+	}
+}
+
+// 벽에 몸체가 부딛혔는지 체크. 부딛혔을 시 1, 아니면 0을 리턴
+int CheckTouchWall(int x,int y)
+{
+	Bem* temp = Head;
+	int tmp_x,tmp_y;
+
+	mvprintw(8,55,"GOGO");
+	refresh();
+	while(temp != NULL)
+	{
+		tmp_x = temp->pos_x;
+		tmp_y = temp->pos_y;
+		if( (tmp_x == x) && (tmp_y == y) )
+			return 1;
+		temp = temp->next;
+	}
+
+	return 0;
+}
+
+void GameOver()
+{
+	signal(SIGALRM,SIG_IGN);
+	if(reverse == 0)
+		del(Tail);
+	else
+		del(Head);
+}
+
+void ReverseBem()
+{
+	if(reverse == 0){
+		reverse = 1;
+		dir_x = Tail->pos_x - Tail->prev->pos_x;
+		dir_y = Tail->pos_y - Tail->prev->pos_y;
+	}
+	else{
+		reverse = 0;
+		dir_x = Head->pos_x - Head->next->pos_x;
+		dir_y = Head->pos_y - Head->next->pos_y;
+	}
 }
 
 void wrap_up(){
@@ -85,7 +136,6 @@ void wrap_up(){
 }
 
 void setup(int x,int y){				//뱀의 기본위치를 세팅하고 딜레이를 주는 부분
-	initscr();
 	Head = (Bem*)malloc(sizeof(Bem));
 	Tail = (Bem*)malloc(sizeof(Bem));
 	
@@ -97,16 +147,13 @@ void setup(int x,int y){				//뱀의 기본위치를 세팅하고 딜레이를 �
 	Head->next = Tail;
 	Head->prev = NULL;
 	Tail->prev = Head;
-	Tail->next = NULL;
-
-	refresh();	
+	Tail->next = NULL;	
 }
 
 void whileBem(int signum){
 	signal(SIGALRM,SIG_IGN);
-//	FollowBam();
 	moveBem();
-	signal(SIGALRM,whileBem);
+	//signal(SIGALRM,whileBem);
 }
 
 void moveBem(){		//뱀의 맨 앞부분부터 자신의 값을 뒤로 넘기고 머리는 맨 마지막에 값을 변경함
@@ -117,8 +164,6 @@ void moveBem(){		//뱀의 맨 앞부분부터 자신의 값을 뒤로 넘기고 
 	
 	if(reverse==0){
 		mvaddch(Tail->pos_y,Tail->pos_x,BLANK);
-
-//		mvprintw(0,0,"head (%d,%d)",Head->pos_x,Head->pos_y);
 		Temp = Tail;
 		do{
 			x=Temp->prev->pos_x;
@@ -129,7 +174,6 @@ void moveBem(){		//뱀의 맨 앞부분부터 자신의 값을 뒤로 넘기고 
 			mvaddch(Temp->pos_y,Temp->pos_x,BODYSYMBOL);
 			Temp = Temp->prev;
 
-//			mvprintw(i,0,"body (%d,%d)",Temp->pos_x,Temp->pos_y);
 			i++;
 		}while(Temp->prev);
 
@@ -157,7 +201,11 @@ void moveBem(){		//뱀의 맨 앞부분부터 자신의 값을 뒤로 넘기고 
 		mvaddch(Tail->pos_y,Tail->pos_x,HEADSYMBOL);
 	}
 	move(23,79);
-	refresh();	
+	refresh();
+	// 시그널 재 등록
+	signal(SIGALRM,whileBem);
+	//충돌 이벤트 발생 여부 확인
+	CheckEvent();
 }
 
 void addBem(){	
@@ -171,7 +219,7 @@ void addBem(){
 }
 
 void del(Bem* Temp){
-	while(Temp == NULL){
+	while(Temp != NULL){
 		if(reverse == 0){
 			mvaddch(Temp->pos_y,Temp->pos_x,BLANK);
 			Temp = Temp->next;
@@ -181,7 +229,6 @@ void del(Bem* Temp){
 			Temp = Temp->prev;
 		}
 		refresh();	
-		sleep(0.2);
 	}
 }
 
@@ -215,11 +262,6 @@ Bem *insertBody(Bem *left,Bem *right){
 
 	New->pos_x = right->pos_x;
 	New->pos_y = right->pos_y;
-//	mvprintw(10,0,"nwe Body (%d,%d)",New->pos_x,New->pos_y);		테스트용
-
-
-//	mvprintw(11,0,"right Body (%d,%d)",right->pos_x,right->pos_y);		테스트용
-
 	return New;
 }
 

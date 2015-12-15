@@ -1,15 +1,8 @@
 #include <ncurses.h>
 #include "map.h"
-
+#include "Bem.h"
 #define MENU_HEIGHT 5
 #define MENU_WIDTH  10
-
-enum Menu
-{	
-	START=1,
-	RANK,
-	EXIT,
-};
 
 // 선택된 메뉴 하이라이트 
 void Highlight_Menu(WINDOW* menu_win, int highlight, char** choices, int choice_num )
@@ -34,8 +27,9 @@ void Highlight_Menu(WINDOW* menu_win, int highlight, char** choices, int choice_
 }
 
 // 메뉴 선택창 출력
-void DisplayMenu(int x,int y)
+int DisplayMenu(int x,int y)
 {
+	int result;
 	WINDOW* menu_win;
 	int highlight = 1;
 	int choice = 0;
@@ -100,26 +94,30 @@ void DisplayMenu(int x,int y)
 				//메인 선택 메뉴 clear
 				endwin();
 				//stage1 시작
-				StageOneDraw(FirstMap);
+				result = START;
+				//StageOneDraw(FirstMap);
 				break;
 			}
 			// RANK 선택 시
 			else if(choice == RANK)
 			{
-
+				result = RANK;
 			}
 			// EXIT 선택 시
 			else if(choice == EXIT)
 			{
 				endwin();
+				result = EXIT;
 				break;
 			}
 		}
 	}
+
+	return result;
 }
 
 // 게임 시작 창
-void StartMenu()
+int StartMenu()
 {
 	int x=0;
 	int y=0;
@@ -129,9 +127,9 @@ void StartMenu()
 	clear();
 
 	//시작 화면 출력
-	for(x=0;x<STAGE1ROW;x++)
+	for(x=0;x<STAGE_ROW;x++)
 	{
-		for(y=0;y<STAGE1COL;y++)
+		for(y=0;y<STAGE_COL;y++)
 		{
 			// 벽 일 경우
 			if(StartMap[x][y] == WALL)
@@ -150,45 +148,50 @@ void StartMenu()
 	refresh();
 
 	// 메뉴 출력
-	DisplayMenu(STAGE1ROW/2+2, STAGE1COL/2-4);
+	return DisplayMenu(STAGE_ROW/2+2, STAGE_COL/2-4);
 }
 
 
 //stage 1 그리기
-void StageOneDraw(int StageMap[STAGE1ROW][STAGE1COL])
+void StageOneDraw(int StageMap[STAGE_ROW][STAGE_COL])
 {
 	int x=0;
 	int y=0;
+	int Bem_start_x = 0;
+	int Bem_start_y = 0;
 
 	//화면 클리어
 	initscr();
 	clear();
 	//맵 출력
-	for(x=0;x<STAGE1ROW;x++)
+	for(y=0;y<STAGE_ROW;y++)
 	{
-		for(y=0;y<STAGE1COL;y++)
+		for(x=0;x<STAGE_COL;x++)
 		{
 			// 벽 일 경우
-			if(StageMap[x][y] == WALL)
+			if(StageMap[y][x] == WALL)
 			{
-				move(x,y);
+				move(y,x);
 				addstr("*");
 			}
 			// snake 시작지점 일 경우
-			else if(StageMap[x][y] == SNAKE_START)
+			else if(StageMap[y][x] == SNAKE_START)
 			{
-				move(x,y);
-				addstr("[]");
+				Bem_start_x = x;
+				Bem_start_y = y;
+				// move(x,y);
+				// addstr("[]");
 			}
 			// 빈 공간일 경우
-			else if(StageMap[x][y] == EMPTY)
+			else if(StageMap[y][x] == EMPTY)
 			{
 				continue;
 			}
 		}
 	}
 	refresh();
-	getch();
+	// 뱀 그리기
+	DrawBem(Bem_start_x,Bem_start_y,StageMap);
 	endwin();
 
 	//두번째 판 시작
@@ -196,7 +199,7 @@ void StageOneDraw(int StageMap[STAGE1ROW][STAGE1COL])
 }
 
 //두번째 판 그리기
-void StageTwoDraw(int StageMap[STAGE1ROW][STAGE1COL])
+void StageTwoDraw(int StageMap[STAGE_ROW][STAGE_COL])
 {
 	int x=0;
 	int y=0;
@@ -205,9 +208,9 @@ void StageTwoDraw(int StageMap[STAGE1ROW][STAGE1COL])
 	initscr();
 	clear();
 	//맵 출력
-	for(x=0;x<STAGE1ROW;x++)
+	for(x=0;x<STAGE_ROW;x++)
 	{
-		for(y=0;y<STAGE1COL;y++)
+		for(y=0;y<STAGE_COL;y++)
 		{
 			// 벽 일 경우
 			if(StageMap[x][y] == WALL)

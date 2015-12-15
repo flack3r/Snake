@@ -5,10 +5,18 @@
 
 int main()
 {
-	StartMenu();
-
-	//getch();
-	//endwin();
-
+	int select;
+	select = StartMenu();
+	switch(select)
+	{
+		case START:
+			StageOneDraw(FirstMap);
+			break;
+		case RANK:
+			break;
+		case EXIT:
+			break;
+	}
+	
 	return 0;
 }

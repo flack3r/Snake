@@ -1,19 +1,28 @@
-// stage1: 네모난 사각형 맵 20*50
-#define STAGE1ROW 20
-#define STAGE1COL 50
+#ifndef MAP
+#define MAP
+// stage1: 네모난 사각형 맵 50*20
+#define STAGE_ROW 20
+#define STAGE_COL 50
 #define WALL 1
 #define EMPTY 0
 #define SNAKE_START 2
 
 // Draw function
-void DisplayMenu(int x,int y);
-void StartMenu();
-void StageOneDraw(int StageMap[STAGE1ROW][STAGE1COL]);
-void StageTwoDraw(int StageMap[STAGE1ROW][STAGE1COL]);
+int DisplayMenu(int x,int y);
+int StartMenu();
+void StageOneDraw(int StageMap[STAGE_ROW][STAGE_COL]);
+void StageTwoDraw(int StageMap[STAGE_ROW][STAGE_COL]);
 /* Map array */
 
+enum Menu
+{	
+	START=1,
+	RANK,
+	EXIT
+};
+
 // start
-static int StartMap[STAGE1ROW][STAGE1COL] = 
+static int StartMap[STAGE_ROW][STAGE_COL] = 
 	{{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 	 {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
 	 {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -37,7 +46,7 @@ static int StartMap[STAGE1ROW][STAGE1COL] =
 	};
 
 // stage1
-static int FirstMap[STAGE1ROW][STAGE1COL] = 
+static int FirstMap[STAGE_ROW][STAGE_COL] = 
 	{{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 	 {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
 	 {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -61,7 +70,7 @@ static int FirstMap[STAGE1ROW][STAGE1COL] =
 	};
 
 // stage2: 
-static int SecondMap[STAGE1ROW][STAGE1COL] =
+static int SecondMap[STAGE_ROW][STAGE_COL] =
 	{{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	 {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 	 {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -83,3 +92,5 @@ static int SecondMap[STAGE1ROW][STAGE1COL] =
 	 {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
 	 {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 	};
+
+#endif
