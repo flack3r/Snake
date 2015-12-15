@@ -1,4 +1,4 @@
-﻿#include <stdio.h>
+#include <stdio.h>
 #include <curses.h>
 #include <signal.h>
 #include <string.h>
@@ -9,10 +9,7 @@
 #include "Bem.h"
 #include "map.h"
 
-#define WIN 1
-#define LOSE 0
-
-int reverse = 0;						//0이면 앞뒤반전된적 없음 1이면 앞뒤 반전됨 앞뒤반전 아이템을 먹었을때 값을 바꿔주면 됨
+int reverse = 0;	//0이면 앞뒤반전된적 없음 1이면 앞뒤 반전됨 앞뒤반전 아이템을 먹었을때 값을 바꿔주면 됨
 int delay = 200;
 int dir_x=1;
 int dir_y=0;
@@ -36,16 +33,16 @@ int DrawBem(int x,int y,int StageMap[STAGE_ROW][STAGE_COL]){	//start game
 		else if( c == 'a')	{dir_x=-1; dir_y=0;}
 		else if( c == 's')	{dir_x=0; dir_y=1;}
 		else if( c == 'd')	{dir_x=1; dir_y=0;}
-		else if( c == 'e')	{addBem();}
-		else if( c == 'r'){
-			ReverseBem();
+		else if(c == 'x' && game_result == LOSE){ //게임 패배
+			break;
 		}
-		else if(c == 'x' && game_result == LOSE){				//게임이 종료되었을 경우 불러오면 됨
+		else if(c == 'z' && game_result == WIN) // 게임 클리어
+		{
 			break;
 		}
 	}
-	return 1;	//이겼을 경우 0인가 1인가에 따라 승리화면과 패배화면을 출력하도록값을 넘겨줌 
-//	return 0;
+
+	return game_result;	//이겼을 경우 0인가 1인가에 따라 승리화면과 패배화면을 출력하도록값을 넘겨줌 
 }
 
 // 충돌 이벤트 발생 처리 (이기고 지느냐에 따라 game_result값 결정)
@@ -71,6 +68,7 @@ void CheckEvent()
 	{
 		for(x=0;x<STAGE_COL;x++)
 		{
+			//벽인 경우 벰이 부딛혔는지 체크
 			if(CurrentMap[y][x] == WALL)
 			{
 				if(CheckTouchWall(x,y) == 1)
@@ -83,6 +81,41 @@ void CheckEvent()
 					GameOver();
 				}
 			}
+			//먹이 먹은 경우
+			else if(CurrentMap[y][x] == FOOD)
+			{
+				//뱀의 머리 부분이 닿을 경우
+				if(Bem_x == x && Bem_y == y)
+				{
+					FoodNum--;
+					CurrentMap[y][x] = EMPTY;
+					move(y,x);
+					addstr(" ");
+					addBem();
+
+					//mvprintw(10,55,"%d",FoodNum);
+					//음식 다 먹은 경우 승리
+					if(FoodNum == 0)
+					{
+						mvprintw(10,55,"Clear. Enter 'z' key");
+						refresh();
+						game_result = WIN;
+						GameOver();
+					}
+				}
+			}
+			//Reverse Item 먹을 경우
+			else if(CurrentMap[y][x] == REVERSE)
+			{
+				if(Bem_x == x && Bem_y == y)
+				{
+					CurrentMap[y][x] = EMPTY;
+					move(y,x);
+					addstr(" ");
+
+					ReverseBem();
+				}
+			}
 		}
 	}
 }
@@ -93,11 +126,11 @@ int CheckTouchWall(int x,int y)
 	Bem* temp = Head;
 	int tmp_x,tmp_y;
 
-	mvprintw(8,55,"GOGO");
 	refresh();
 	while(temp != NULL)
 	{
 		tmp_x = temp->pos_x;
+		
 		tmp_y = temp->pos_y;
 		if( (tmp_x == x) && (tmp_y == y) )
 			return 1;
@@ -202,10 +235,21 @@ void moveBem(){		//뱀의 맨 앞부분부터 자신의 값을 뒤로 넘기고 
 	}
 	move(23,79);
 	refresh();
-	// 시그널 재 등록
-	signal(SIGALRM,whileBem);
-	//충돌 이벤트 발생 여부 확인
-	CheckEvent();
+	//본인 꼬리 부딛힐 경우
+	if((Head->pos_x == Tail->pos_x) &&(Head->pos_y == Tail->pos_y) )
+	{
+		mvprintw(10,55,"You die. Enter 'x' key");
+		refresh();
+		game_result = LOSE;
+		GameOver();
+	}
+	else
+	{
+		// 시그널 재 등록
+		signal(SIGALRM,whileBem);
+		//충돌 이벤트 발생 여부 확인
+		CheckEvent();
+	}
 }
 
 void addBem(){	

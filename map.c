@@ -1,6 +1,10 @@
 #include <ncurses.h>
+#include <string.h>
+#include <stdlib.h>
 #include "map.h"
 #include "Bem.h"
+#include "Person.h"
+
 #define MENU_HEIGHT 5
 #define MENU_WIDTH  10
 
@@ -152,13 +156,14 @@ int StartMenu()
 }
 
 
-//stage 1 그리기
-void StageOneDraw(int StageMap[STAGE_ROW][STAGE_COL])
+//stage 그리기
+int StageDraw(int StageMap[STAGE_ROW][STAGE_COL])
 {
 	int x=0;
 	int y=0;
 	int Bem_start_x = 0;
 	int Bem_start_y = 0;
+	int result;
 
 	//화면 클리어
 	initscr();
@@ -182,6 +187,19 @@ void StageOneDraw(int StageMap[STAGE_ROW][STAGE_COL])
 				// move(x,y);
 				// addstr("[]");
 			}
+			// 먹이 일 경우
+			else if(StageMap[y][x] == FOOD)
+			{
+				FoodNum++;
+				move(y,x);
+				addstr("O");
+			}
+			//Reverse일 경우
+			else if(StageMap[y][x] == REVERSE)
+			{
+				move(y,x);
+				addstr("?");
+			}
 			// 빈 공간일 경우
 			else if(StageMap[y][x] == EMPTY)
 			{
@@ -191,47 +209,76 @@ void StageOneDraw(int StageMap[STAGE_ROW][STAGE_COL])
 	}
 	refresh();
 	// 뱀 그리기
-	DrawBem(Bem_start_x,Bem_start_y,StageMap);
+	result = DrawBem(Bem_start_x,Bem_start_y,StageMap);
 	endwin();
 
-	//두번째 판 시작
-	StageTwoDraw(SecondMap);
+	return result;
 }
 
-//두번째 판 그리기
-void StageTwoDraw(int StageMap[STAGE_ROW][STAGE_COL])
+void EndingDraw(int StageMap[STAGE_ROW][STAGE_COL],int stage)
 {
-	int x=0;
-	int y=0;
+	Person tmp = {0,};
+	FILE* f_result = fopen("rank.dat","w");
+	char name[30] = {0,};
+	int x,y,i=0;
+	char c;
+	int idx;
 
 	//화면 클리어
 	initscr();
 	clear();
 	//맵 출력
-	for(x=0;x<STAGE_ROW;x++)
+	for(y=0;y<STAGE_ROW;y++)
 	{
-		for(y=0;y<STAGE_COL;y++)
+		for(x=0;x<STAGE_COL;x++)
 		{
 			// 벽 일 경우
-			if(StageMap[x][y] == WALL)
+			if(StageMap[y][x] == WALL)
 			{
-				move(x,y);
-				addstr("*");
+				move(y,x);
+				addstr("@");
 			}
-			// snake 시작지점 일 경우
-			else if(StageMap[x][y] == SNAKE_START)
-			{
-				move(x,y);
-				addstr("[]");
-			}
-			// 빈 공간일 경우
-			else if(StageMap[x][y] == EMPTY)
+			else if(StageMap[y][x] == EMPTY)
 			{
 				continue;
 			}
 		}
 	}
+
+	mvprintw(10,24,"Game is End");
+	mvprintw(11,24,"End stage: %d",stage);
+
+	// 만약 stage가 ranking에 든다면
+	if( !CheckTopTen(stage) )
+	{
+		mvprintw(12,24,"Input Name");
+		mvprintw(13,24,">");
+		refresh();
+		while( (c = getch()) !='\n')
+		{
+			name[i] = c;
+			i++;
+			move(13,24+i);
+			addch(c);
+		}
+		tmp.stage = stage;
+		strncpy(tmp.name,name,sizeof(name));
+
+		// stage 순으로 sorting
+		Player[NumPlayer+1] = tmp;
+		qsort(Player,NumPlayer+1,sizeof(Person),StageComp);
+
+		//파일 쓰기
+		fwrite(Player,sizeof(Person),11,f_result);
+		mvprintw(15,27,"Rank register success");
+	}
+	else
+	{
+		mvprintw(12,22,"You are not Top10 Try hard");
+		refresh();
+	}
+	
+	fclose(f_result);
 	refresh();
-	getch();
 	endwin();
 }

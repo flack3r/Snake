@@ -6,6 +6,8 @@
 #define BODYSYMBOL 'O'
 #define SET_X 25
 #define SET_Y 10
+#define WIN 1
+#define LOSE 0
 	
 typedef struct Bem{
 	struct Bem *prev;
@@ -13,6 +15,7 @@ typedef struct Bem{
 	int pos_x;
 	int pos_y;
 	}Bem;
+
 
 void setup(int,int);
 void FollowBam();
