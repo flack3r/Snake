@@ -1,4 +1,5 @@
 #This is Snake Game
 
-Sometimes when you feel so tired,boring then Do this game~!
-select menu throw arrow key and move snake throw w,a,s,d keyborad key
+clone하시고 게임 하시면 됩니다.
+컴파일 시에 make로 그냥 컴파일 하시면 됩니다.
+
