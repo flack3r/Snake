@@ -37,6 +37,11 @@ void GameStart()
 		if(StageDraw(SecondMap) == WIN)
 		{
 			stage++;
+			//stage 3 start
+			if(StageDraw(ThirdMap) == WIN)
+			{
+				stage++;
+			}
 		}
 	}
 	// 게임 패배 경우
