@@ -97,15 +97,15 @@ int DisplayMenu(int x,int y)
 			{
 				//메인 선택 메뉴 clear
 				endwin();
-				//stage1 시작
 				result = START;
-				//StageOneDraw(FirstMap);
 				break;
 			}
 			// RANK 선택 시
 			else if(choice == RANK)
 			{
+				endwin();
 				result = RANK;
+				break;
 			}
 			// EXIT 선택 시
 			else if(choice == EXIT)
@@ -265,7 +265,7 @@ void EndingDraw(int StageMap[STAGE_ROW][STAGE_COL],int stage)
 		strncpy(tmp.name,name,sizeof(name));
 
 		// stage 순으로 sorting
-		Player[NumPlayer+1] = tmp;
+		Player[NumPlayer] = tmp;
 		qsort(Player,NumPlayer+1,sizeof(Person),StageComp);
 
 		//파일 쓰기
@@ -280,5 +280,44 @@ void EndingDraw(int StageMap[STAGE_ROW][STAGE_COL],int stage)
 	
 	fclose(f_result);
 	refresh();
+	endwin();
+}
+
+void RankDraw()
+{
+	int i;
+	int x=0;
+	int y=0;
+
+	//화면 클리어
+	initscr();
+	clear();
+
+	//시작 화면 출력
+	for(x=0;x<STAGE_ROW;x++)
+	{
+		for(y=0;y<STAGE_COL;y++)
+		{
+			// 벽 일 경우
+			if(StartMap[x][y] == WALL)
+			{
+				move(x,y);
+				addstr("*");
+			}
+			// 빈 공간일 경우
+			else if(StartMap[x][y] == EMPTY)
+			{
+				continue;
+			}
+		}
+	}
+
+	SettingPerson();
+	for(i=0;i<NumPlayer;i++)
+	{
+		mvprintw(3+i,5,"[%d] name: %s, stage: %d",i+1,Player[i].name,Player[i].stage);
+	}
+	refresh();
+	getch();
 	endwin();
 }

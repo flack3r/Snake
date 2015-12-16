@@ -16,7 +16,7 @@ int DisplayMenu(int x,int y);
 int StartMenu();
 int StageDraw(int StageMap[STAGE_ROW][STAGE_COL]);
 void EndingDraw(int StageMap[STAGE_ROW][STAGE_COL],int stage);
-
+void RankDraw();
 // 먹이 갯수
 int FoodNum;
 

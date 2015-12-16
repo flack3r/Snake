@@ -8,15 +8,15 @@ void SettingPerson()
 	int i =0;
 	Person tmp = {0,};
 	FILE* f = fopen("rank.dat","rb");
-	if(f != NULL)
+	if(f == NULL)
 		return;
 
 	fread(&tmp,sizeof(Person),1,f);
-	Player[i++] = tmp;
+	memcpy(&Player[i++],&tmp,sizeof(Person));
 	while(!feof(f))
 	{
 		fread(&tmp,sizeof(Person),1,f);
-		Player[i++] = tmp;
+		memcpy(&Player[i++],&tmp,sizeof(Person));
 		if(i >= NumPlayer)
 			break;
 	}

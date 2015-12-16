@@ -4,6 +4,8 @@
 #include "Bem.h"
 
 void GameStart();
+void RankView();
+
 int main()
 {
 	int select;
@@ -15,6 +17,7 @@ int main()
 			GameStart();
 			break;
 		case RANK:
+			RankView();
 			break;
 		case EXIT:
 			break;
@@ -41,4 +44,9 @@ void GameStart()
 	{
 		EndingDraw(StartMap,stage);
 	}
+}
+
+void RankView()
+{
+	RankDraw();
 }
