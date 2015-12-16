@@ -37,7 +37,7 @@ int CheckTopTen(int stage)
 	{
 		if(Player[i].stage <= stage)
 		{
-			return;
+			break;
 		}
 	}
 	return (i<NumPlayer)? 0 : 1; 

@@ -218,7 +218,7 @@ int StageDraw(int StageMap[STAGE_ROW][STAGE_COL])
 void EndingDraw(int StageMap[STAGE_ROW][STAGE_COL],int stage)
 {
 	Person tmp = {0,};
-	FILE* f_result = fopen("rank.dat","w");
+	FILE* f_result;
 	char name[30] = {0,};
 	int x,y,i=0;
 	char c;
@@ -268,18 +268,22 @@ void EndingDraw(int StageMap[STAGE_ROW][STAGE_COL],int stage)
 		Player[NumPlayer] = tmp;
 		qsort(Player,NumPlayer+1,sizeof(Person),StageComp);
 
+		f_result = fopen("rank.dat","r+");
+		// rank.dat 파일이 없을 때
+		if(f_result==NULL)
+			f_result = fopen("rank.dat","w");
 		//파일 쓰기
+		fflush(f_result);
 		fwrite(Player,sizeof(Person),11,f_result);
-		mvprintw(15,27,"Rank register success");
+		mvprintw(15,15,"Rank register success");
+		fclose(f_result);
 	}
 	else
 	{
-		mvprintw(12,22,"You are not Top10 Try hard");
-		refresh();
+		mvprintw(12,15,"You are not Top10 Try hard");
 	}
-	
-	fclose(f_result);
 	refresh();
+	getch();
 	endwin();
 }
 

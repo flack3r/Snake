@@ -36,14 +36,11 @@ void GameStart()
 		//stage 2 start
 		if(StageDraw(SecondMap) == WIN)
 		{
-
+			stage++;
 		}
 	}
 	// 게임 패배 경우
-	else
-	{
-		EndingDraw(StartMap,stage);
-	}
+	EndingDraw(StartMap,stage);
 }
 
 void RankView()
