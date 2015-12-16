@@ -262,7 +262,7 @@ void EndingDraw(int StageMap[STAGE_ROW][STAGE_COL],int stage)
 			addch(c);
 		}
 		tmp.stage = stage;
-		strncpy(tmp.name,name,sizeof(name));
+		strncpy(tmp.name,name,sizeof(tmp.name));
 
 		// stage 순으로 sorting
 		Player[NumPlayer] = tmp;
