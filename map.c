@@ -81,7 +81,7 @@ int DisplayMenu(int x,int y)
 				choice = highlight;                                                                     
 				break;                                                                                  
 			default:                                                                                        
-				mvprintw(24, 0, "Charcter pressed is = %3d Hopefully it can be printed as '%c'", input, input); 
+				//mvprintw(24, 0, "Charcter pressed is = %3d Hopefully it can be printed as '%c'", input, input); 
 				refresh();                                                                              
 				break;                                                                                  
 		}                                                                                                       
@@ -196,6 +196,24 @@ int StageDraw(int StageMap[STAGE_ROW][STAGE_COL])
 			}
 			//Reverse일 경우
 			else if(StageMap[y][x] == REVERSE)
+			{
+				move(y,x);
+				addstr("?");
+			}
+			//SLOW 아이템일 경우
+			else if(StageMap[y][x] == SLOW)
+			{
+				move(y,x);
+				addstr("?");
+			}
+			// FAST 아이템일 경우
+			else if(StageMap[y][x] == FAST)
+			{
+				move(y,x);
+				addstr("?");
+			}
+			// ADD Bem length
+			else if(StageMap[y][x] == ADDBODY)
 			{
 				move(y,x);
 				addstr("?");

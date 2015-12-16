@@ -19,9 +19,11 @@ int count = 0;
 Bem* Head;
 Bem* Tail;
 
+
 int DrawBem(int x,int y,int StageMap[STAGE_ROW][STAGE_COL]){	//start game
 	char c;
 	CurrentMap = StageMap;
+	delay = 200;
 
 	signal(SIGALRM,whileBem);
 	set_ticker(delay);
@@ -93,6 +95,8 @@ void CheckEvent()
 					addstr(" ");
 					addBem();
 
+					delay = delay-20>0? delay-20: 0.1;
+					set_ticker(delay);
 					//mvprintw(10,55,"%d",FoodNum);
 					//음식 다 먹은 경우 승리
 					if(FoodNum == 0)
@@ -112,10 +116,49 @@ void CheckEvent()
 					CurrentMap[y][x] = EMPTY;
 					move(y,x);
 					addstr(" ");
-
 					ReverseBem();
 				}
 			}
+			//SLOW 아이템 먹을 경우
+			else if(CurrentMap[y][x] == SLOW)
+			{
+				if(Bem_x == x && Bem_y == y)
+				{
+					CurrentMap[y][x] = EMPTY;
+					move(y,x);
+					addstr(" ");
+					delay = delay+60;
+					set_ticker(delay);
+				}
+			}
+			// FAST 아이템을 먹을 경우
+			else if(CurrentMap[y][x] == FAST)
+			{
+				if(Bem_x == x && Bem_y == y)
+				{
+					CurrentMap[y][x] = EMPTY;
+					move(y,x);
+					addstr(" ");
+					delay = delay-80>0? delay-80: 0.1;
+					set_ticker(delay);
+				}
+			}
+			// 길이 길어지는 것
+			else if(CurrentMap[y][x] == ADDBODY)
+			{
+				if(Bem_x == x && Bem_y == y)
+				{
+					CurrentMap[y][x] = EMPTY;
+					move(y,x);
+					addstr(" ");
+					addBem();
+					addBem();
+					addBem();
+					addBem();
+					addBem();
+				}
+			}
+
 		}
 	}
 }
@@ -236,7 +279,7 @@ void moveBem(){		//뱀의 맨 앞부분부터 자신의 값을 뒤로 넘기고 
 	move(23,79);
 	refresh();
 	//본인 꼬리 부딛힐 경우
-	if((Head->pos_x == Tail->pos_x) &&(Head->pos_y == Tail->pos_y) )
+	if(CheckBodyColl())
 	{
 		mvprintw(10,55,"You die. Enter 'x' key");
 		refresh();
@@ -250,6 +293,42 @@ void moveBem(){		//뱀의 맨 앞부분부터 자신의 값을 뒤로 넘기고 
 		//충돌 이벤트 발생 여부 확인
 		CheckEvent();
 	}
+}
+
+// 움직일 시 몸통 충돌 확인 충돌 시 return 1, 아니면 0
+int CheckBodyColl()
+{
+	Bem* tmp;
+	int x;
+	int y;
+
+	if(reverse==0)
+	{
+		tmp = Head;
+		x = Head->pos_x;
+		y = Head->pos_y;
+		tmp = Head->next;
+		while(tmp)
+		{
+			if(x == tmp->pos_x && y == tmp->pos_y)
+				return 1;
+			tmp = tmp->next;
+		}
+	}
+	else
+	{
+		tmp = Tail;
+		x = Tail->pos_x;
+		y = Tail->pos_y;
+		tmp = Tail->prev;
+		while(tmp)
+		{
+			if(x == tmp->pos_x && y == tmp->pos_y)
+				return 1;
+			tmp = tmp->prev;
+		}
+	}
+	return 0;
 }
 
 void addBem(){	

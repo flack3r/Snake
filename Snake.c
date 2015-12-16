@@ -41,6 +41,8 @@ void GameStart()
 			if(StageDraw(ThirdMap) == WIN)
 			{
 				stage++;
+				if(StageDraw(FourthMap) == WIN)
+					stage++;
 			}
 		}
 	}
