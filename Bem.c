@@ -95,7 +95,8 @@ void CheckEvent()
 					addstr(" ");
 					addBem();
 
-					delay = delay-20>0? delay-20: 0.1;
+
+					delay = delay-20>0? delay-20: 1;
 					set_ticker(delay);
 					//mvprintw(10,55,"%d",FoodNum);
 					//음식 다 먹은 경우 승리
@@ -139,7 +140,7 @@ void CheckEvent()
 					CurrentMap[y][x] = EMPTY;
 					move(y,x);
 					addstr(" ");
-					delay = delay-80>0? delay-80: 0.1;
+					delay = delay-50>0? delay-50: 1;
 					set_ticker(delay);
 				}
 			}
